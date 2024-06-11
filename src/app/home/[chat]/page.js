@@ -1,6 +1,8 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from "@/components/ui/scroll-area"
+
 import { useSocketContext } from '@/context/socketContext';
 import { LinkIcon, SendIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -41,9 +43,10 @@ function Chatting() {
     const respone = await send.json();
     setMymessage(respone);
     setsendbyReceiver(respone);
-    console.log(respone);
+  
   }
-  //  console.log(messages)
+  
+  
   useEffect(() => {
     fetchData();
     getMessages();
@@ -59,11 +62,13 @@ function Chatting() {
       body: JSON.stringify({ senderId: userId, receiverId: receiverId, message: sendMessage })
     })
     const respon = await send.json();
+   
     socket.emit('sendMessage', { userId, receiverId, message: sendMessage });
-    setSendMessage("");
+
     setTimeout(() => {
       getMessages();
     }, 100);
+    setSendMessage("")
     console.log("data form  sendMessage ", respon)
   }
 
@@ -74,11 +79,12 @@ function Chatting() {
         newMessage.shouldShake = true;
         setsendbyReceiver([...sendbyReceiver, newMessage]);
       });
+      getMessages()
 
       return () => socket?.off('newMessage');
     }, [socket, sendbyReceiver, setsendbyReceiver]);
   };
-  console.log(sendbyReceiver);
+ 
   listeMessages();
   const formatTime = time => {
     const options = { hour: 'numeric', minute: 'numeric' };
@@ -86,7 +92,7 @@ function Chatting() {
   };
   return (
     <div className='text-black h-full'>
-      <div className='p-1 border flex gap-2'>
+      <div className=' sticky  w-full  z-10 p-1 border flex gap-2'>
         <Image className='rounded-[20px] h-[40px] w-[40px]' src={receiver.image} alt='Receiver Image' height={60} width={60} />
         <div>
           <p>{receiver.name}</p>
@@ -94,7 +100,9 @@ function Chatting() {
         </div>
       </div>
       <div>
-        <div className='flex flex-row justify-between p-1'>
+       <ScrollArea className=" h-screen">
+       <div className='flex z-0 flex-row justify-between mb-[100px] p-1'>
+          <ScrollArea>
           <div className=' p-1 text-sm rounded-md text-wrap '>
             {mymessage?.map((msg, index) => {
               return msg.senderId._id === userId && (
@@ -106,29 +114,35 @@ function Chatting() {
             })}
 
           </div>
-          <div className=' p-1 text-sm rounded-md text-wrap '>
+          </ScrollArea>
+           <ScrollArea>
+           <div className=' p-1 text-sm rounded-md text-wrap '>
             {sendbyReceiver.map((msg, index) => msg.senderId._id === receiverId && (
               <div key={index} className=' bg-green-200  p-2 m-2 rounded-md ' >
-               <p>{msg.message}</p>
-               <p>{formatTime(msg.timeStamp)}</p>
+                <p>{msg.message}</p>
+                <p>{formatTime(msg.timeStamp)}</p>
               </div>
             ))}
           </div>
+           </ScrollArea>
         </div>
-        <div className='absolute bottom-2 justify-center items-center w-full'>
+       
+        <div className=' fixed bottom-2 justify-center items-center w-full'>
+
           <div className='w-full flex relative'>
             <input
               onChange={(e) => setSendMessage(e.target.value)}
-
+               value={sendMessage}
               placeholder='Enter your message'
               className="h-[40px] rounded-xl w-full p-1 border-2 border-black"
               type="text"
             />
-            <div onClick={sendMessages}>
+            <div className=' cursor-pointer' onClick={sendMessages}>
               <SendIcon className='flex ml-2 mr-2 font-extrabold size-[40px] gap-2 self-center' />
             </div>
           </div>
         </div>
+        </ScrollArea>
       </div>
     </div>
   );
