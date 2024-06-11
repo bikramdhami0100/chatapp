@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+//     let array = ["bikram", "bikram", "ram", "ram","hari"];
+// let uniqueArray = array.filter((item, index) =>{
+//     console.log(array.indexOf(item))
+// });
+// console.log(uniqueArray); // Output: ["bikram", "ram"]
+function voice(string) {
+   if (window) {
+     const voice=new SpeechSynthesisUtterance(string);
+     window.speechSynthesis.speak(voice);
+   }
+}
+voice("this is bikram dhami from bajhang")
+</script>
+</html>
